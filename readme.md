@@ -1,10 +1,6 @@
-<h1>welcome to crazy casino 3<h1/>
-<p>Its newer with more games. introducing Poker, and blackjack.
-With more fun situations<p/> 
+<h>Welcome to Crazy Casino 3! 🎰<h/>
+<p>Get ready for our biggest upgrade yet — packed with more games, more thrills, and more ways to win!
+Now featuring Poker ♠ and Blackjack ♣, plus a host of new, fun-filled challenges to keep you on the edge of your seat.
+Crazy Casino 3 launches on the 1st of [Month] — mark your calendar and join the action!<p/>
 
-Crazy casino 3 releasing on 1st of August
-
-
-
-$${\color{gold}Releasing\ on\ the\ 1st\ of\ Auguest}$$
 
