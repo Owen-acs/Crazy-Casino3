@@ -1,0 +1,27 @@
+{
+  "name": "crazy-casino-3",
+  "version": "1.0.0",
+  "description": "An opensource adicting sequal to crazy casino 2 and 1!",
+  "homepage": "https://github.com/CrazyCassino/Crazy-Casino3#readme",
+  "bugs": {
+    "url": "https://github.com/CrazyCassino/Crazy-Casino3/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CrazyCassino/Crazy-Casino3.git"
+  },
+  "license": "GPL-3.0-only",
+  "author": "Owen, Robert",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^42.4.0"
+  },
+  "dependencies": {
+    "electron": "^42.4.0"
+  }
+}
