@@ -1,1 +1,2 @@
-hi
+
+<gold>WELCOME TO CRAZY CASINO 3<gold/>
