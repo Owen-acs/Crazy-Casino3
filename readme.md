@@ -5,4 +5,7 @@ With more fun situations
 
 Crazy casino 3 releasing on 1st of August
 
-<span style="font-size:20px; color:blue;">This is big blue text</span>
+
+$${\color{red}This\ is\ red\ text}$$
+$${\color{blue}This\ is\ blue\ text}$$
+$${\color{green}This\ is\ green\ text}$$
