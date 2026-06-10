@@ -1,4 +1,4 @@
-####WELCOME TO CRAZY CASINO 3
+<h1>welcome<h1/>
 Its newer with more games. introducing Poker, and blackjack.
 With more fun situations 
 
