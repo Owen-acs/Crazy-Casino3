@@ -1,0 +1,504 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(255, 211, 110, 0.25), transparent 35%),
+    linear-gradient(135deg, #16071f, #35104c, #09030f);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(#ffd36e 1px, transparent 1px),
+    radial-gradient(#ff4fd8 1px, transparent 1px);
+  background-size: 45px 45px, 70px 70px;
+  animation: sparkle 5s linear infinite;
+  opacity: 0.35;
+}
+
+body.prison-theme {
+  background:
+    radial-gradient(circle at top, rgba(160, 255, 160, 0.15), transparent 35%),
+    linear-gradient(135deg, #111, #26312b, #050505);
+}
+
+body.prison-theme::before {
+  background-image:
+    linear-gradient(90deg, transparent 94%, rgba(180, 180, 180, 0.25) 95%),
+    linear-gradient(rgba(180, 180, 180, 0.18) 1px, transparent 1px);
+  background-size: 48px 48px, 48px 48px;
+}
+
+.game {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: 92%;
+  max-width: 460px;
+  padding: 20px 0;
+}
+
+.secret-dice {
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.15s;
+}
+
+.secret-dice:hover {
+  transform: rotate(18deg) scale(1.15);
+}
+
+.admin-open {
+  display: none;
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  background: linear-gradient(#35e9ff, #0077ff);
+  color: white;
+  box-shadow: 0 0 18px #35e9ff;
+}
+
+.game.admin-unlocked .admin-open {
+  display: block;
+}
+
+.admin-panel {
+  display: none;
+  position: fixed;
+  z-index: 20;
+  top: 50%;
+  left: 50%;
+  width: min(94vw, 620px);
+  max-height: 86vh;
+  overflow-y: auto;
+  transform: translate(-50%, -50%);
+  padding: 22px;
+  border-radius: 22px;
+  background: rgba(5, 5, 15, 0.96);
+  border: 2px solid #35e9ff;
+  box-shadow: 0 0 35px #35e9ff, inset 0 0 24px rgba(255, 255, 255, 0.08);
+  text-align: left;
+}
+
+.admin-panel.open {
+  display: block;
+}
+
+.admin-section {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(53, 233, 255, 0.35);
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-header h2,
+.admin-panel h3 {
+  margin: 8px 0 12px;
+  color: #fff6b0;
+}
+
+#adminCloseBtn {
+  padding: 8px 12px;
+  background: linear-gradient(#ff5555, #aa0000);
+  color: white;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 11px;
+}
+
+.admin-grid button {
+  font-size: 13px;
+  padding: 12px 8px;
+}
+
+.path-card {
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(53, 233, 255, 0.09);
+  border: 1px solid rgba(53, 233, 255, 0.3);
+  color: #dffcff;
+}
+
+.path-card p {
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+.intro-screen {
+  display: none;
+  padding: 36px 26px;
+  border-radius: 26px;
+  background: rgba(0, 0, 0, 0.78);
+  border: 3px solid #ffd36e;
+  box-shadow:
+    0 0 35px #ff005d,
+    0 0 70px rgba(255, 211, 110, 0.5),
+    inset 0 0 30px rgba(255, 255, 255, 0.08);
+  animation: doomAppear 0.8s ease forwards;
+}
+
+.intro-screen h1 {
+  font-size: 45px;
+  margin-top: 0;
+  color: #fff6b0;
+  text-shadow: 0 0 14px #ffd36e, 0 0 30px #ff4fd8;
+}
+
+.intro-screen p {
+  color: #fff6b0;
+  font-size: 18px;
+}
+
+#startBtn {
+  margin: 18px 0;
+  padding: 18px 34px;
+  font-size: 22px;
+  background: linear-gradient(#ff4fd8, #ff005d);
+  color: white;
+  animation: pulse 0.75s infinite alternate;
+}
+
+.game.not-started .intro-screen {
+  display: block;
+}
+
+.game.not-started .marquee,
+.game.not-started #gameTitle,
+.game.not-started .note,
+.game.not-started .panel,
+.game.not-started .choice-screen {
+  display: none;
+}
+
+.marquee {
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  background: #ff005d;
+  color: #fff6b0;
+  font-weight: bold;
+  box-shadow: 0 0 20px #ff005d, 0 0 40px #ffd36e;
+  animation: pulse 1.1s infinite alternate;
+}
+
+body.prison-theme .marquee {
+  background: #203a25;
+  color: #b9ffb9;
+  box-shadow: 0 0 20px #5eff72, 0 0 40px #111;
+}
+
+h1 {
+  margin: 8px 0;
+  font-size: 38px;
+  text-shadow: 0 0 12px #ffd36e, 0 0 26px #ff4fd8;
+}
+
+body.prison-theme h1 {
+  color: #d7d7d7;
+  text-shadow: 0 0 12px #5eff72, 0 0 26px #111;
+}
+
+.note {
+  color: #ffd36e;
+  margin-bottom: 14px;
+}
+
+body.prison-theme .note {
+  color: #b9ffb9;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.13);
+  padding: 26px;
+  border: 2px solid rgba(255, 211, 110, 0.7);
+  border-radius: 22px;
+  box-shadow:
+    0 0 25px rgba(255, 211, 110, 0.45),
+    0 0 55px rgba(255, 79, 216, 0.3),
+    inset 0 0 25px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+body.prison-theme .panel {
+  background: rgba(20, 25, 22, 0.88);
+  border-color: #6f7d73;
+  box-shadow: 0 0 30px #111, inset 0 0 25px rgba(120, 255, 140, 0.12);
+}
+
+.stats {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.stats p {
+  width: 130px;
+  margin: 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 0 12px rgba(255, 211, 110, 0.3);
+}
+
+.stats strong {
+  display: block;
+  margin-top: 4px;
+  color: #7cff8b;
+  font-size: 28px;
+  text-shadow: 0 0 12px #7cff8b;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #fff6b0;
+}
+
+input {
+  width: 130px;
+  padding: 11px;
+  border: 2px solid #ffd36e;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  outline: none;
+  background: #fff7d6;
+}
+
+body.prison-theme input {
+  background: #d9d9d9;
+  border-color: #5eff72;
+}
+
+.slots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 26px 0;
+  padding: 16px;
+  border-radius: 18px;
+  background: linear-gradient(#2b123a, #100318);
+  box-shadow: inset 0 0 22px #000;
+}
+
+body.prison-theme .slots {
+  background: repeating-linear-gradient(90deg, #171717, #171717 18px, #303030 20px);
+  border: 2px solid #6f7d73;
+}
+
+.slots span {
+  width: 86px;
+  height: 86px;
+  background: linear-gradient(#ffffff, #ffe7a8);
+  color: #222;
+  border: 4px solid #ffd36e;
+  border-radius: 16px;
+  font-size: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 18px rgba(255, 211, 110, 0.75);
+}
+
+body.prison-theme .slots span {
+  background: linear-gradient(#9b9b9b, #4f4f4f);
+  border-color: #5eff72;
+  box-shadow: 0 0 18px rgba(94, 255, 114, 0.55);
+}
+
+.slots.spinning span {
+  animation: reelSpin 0.18s linear infinite;
+}
+
+.slots.win span {
+  animation: jackpotGlow 0.55s infinite alternate;
+}
+
+.controls,
+.choice-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+button {
+  padding: 13px 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(#fff29b, #ffb300);
+  color: #2c1238;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255, 211, 110, 0.8);
+  transition: transform 0.15s, filter 0.15s;
+}
+
+button:hover {
+  transform: scale(1.07);
+  filter: brightness(1.12);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+#spinBtn {
+  min-width: 105px;
+  background: linear-gradient(#ff4fd8, #ff005d);
+  color: white;
+  font-size: 18px;
+  animation: pulse 0.9s infinite alternate;
+}
+
+body.prison-theme #spinBtn {
+  background: linear-gradient(#5eff72, #1b7c2b);
+}
+
+#message {
+  min-height: 28px;
+  margin-bottom: 0;
+  font-weight: bold;
+  color: #fff6b0;
+  text-shadow: 0 0 10px #ff4fd8;
+}
+
+body.prison-theme #message {
+  color: #b9ffb9;
+  text-shadow: 0 0 10px #5eff72;
+}
+
+.choice-screen {
+  display: none;
+  padding: 32px 24px;
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.84);
+  border: 2px solid #ff005d;
+  box-shadow: 0 0 35px #ff005d, inset 0 0 25px #000;
+  animation: doomAppear 0.9s ease forwards;
+}
+
+.choice-screen h2 {
+  margin-top: 0;
+  font-size: 31px;
+  color: #ff4fd8;
+  text-shadow: 0 0 18px #ff005d;
+}
+
+#choiceText {
+  color: #fff6b0;
+  font-size: 18px;
+}
+
+.choice-buttons button:first-child {
+  background: linear-gradient(#7cff8b, #00c853);
+  color: #06260c;
+  animation: pulse 0.8s infinite alternate;
+}
+
+.tiny {
+  margin-bottom: 0;
+  color: #aaa;
+  font-size: 12px;
+}
+
+.game.game-over-mode .marquee,
+.game.game-over-mode #gameTitle,
+.game.game-over-mode .note,
+.game.game-over-mode .panel {
+  display: none;
+}
+
+.game.game-over-mode .choice-screen {
+  display: block;
+}
+
+@media (max-width: 520px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-screen h1 {
+    font-size: 36px;
+  }
+}
+
+@keyframes reelSpin {
+  from {
+    transform: translateY(-8px) scale(0.96);
+    filter: blur(1px);
+  }
+  to {
+    transform: translateY(8px) scale(1.04);
+    filter: blur(0);
+  }
+}
+
+@keyframes jackpotGlow {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 16px #ffd36e;
+  }
+  to {
+    transform: scale(1.12) rotate(-2deg);
+    box-shadow: 0 0 28px #ff4fd8, 0 0 45px #ffd36e;
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes sparkle {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 90px 90px, -90px 70px;
+  }
+}
+
+@keyframes doomAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.75) rotate(-3deg);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+    filter: blur(0);
+  }
+}
