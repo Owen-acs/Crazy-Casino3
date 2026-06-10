@@ -26,6 +26,7 @@ body::before {
   background-size: 45px 45px, 70px 70px;
   animation: sparkle 5s linear infinite;
   opacity: 0.35;
+  pointer-events: none;
 }
 
 body.prison-theme {
