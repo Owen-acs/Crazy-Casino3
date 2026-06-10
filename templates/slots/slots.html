@@ -1,29 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <h1>Slots Machine</h1>
-    <title>Slots</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Slots Casino</title>
+  <link rel="stylesheet" href="slots.css" />
 </head>
 <body>
-    <h2>Welcome to the Slots Machine!</h2>
-    <p>Try your luck and see if you can win big!</p>
-    <button onclick="playSlots()">Play</button>
-    <div id="result"></div>
+  <main class="slot-shell">
+    <div class="top-bar">
+      <div class="brand">
+        <span class="brand-icon">🎰</span>
+        <div>
+          <p class="brand-label">Neon Slots Casino</p>
+          <p class="brand-note">Flashy reels, free spins, life savings and bonus payouts.</p>
+        </div>
+      </div>
+      <button id="resetBtn" class="tiny-btn">RESET</button>
+    </div>
 
-    <script>
-        function playSlots() {
-            const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐'];
-            const slot1 = symbols[Math.floor(Math.random() * symbols.length)];
-            const slot2 = symbols[Math.floor(Math.random() * symbols.length)];
-            const slot3 = symbols[Math.floor(Math.random() * symbols.length)];
+    <section class="hero">
+      <h1>Spin for Neon Riches</h1>
+      <p>Keep the reels flashing, stack your money, and recover with life savings when the bank runs dry.</p>
+    </section>
 
-            document.getElementById('result').innerText = `You got: ${slot1} ${slot2} ${slot3}`;
+    <section class="stats-grid">
+      <div class="stat-card">
+        <span>Balance</span>
+        <strong id="balanceValue">$250</strong>
+      </div>
+      <div class="stat-card">
+        <span>Life Savings</span>
+        <strong id="lifeValue">$600</strong>
+      </div>
+      <div class="stat-card">
+        <span>Free Spins</span>
+        <strong id="freeValue">1</strong>
+      </div>
+      <div class="stat-card">
+        <span>Last Win</span>
+        <strong id="winValue">$0</strong>
+      </div>
+    </section>
 
-            if (slot1 === slot2 && slot2 === slot3) {
-                document.getElementById('result').innerText += " - Jackpot! You win!";
-            } else {
-                document.getElementById('result').innerText += " - Try again!";
-            }
-        }
-    </script> 
-    <html>
+    <section class="slot-machine">
+      <div class="reels" id="reels">
+        <div class="reel">?</div>
+        <div class="reel">?</div>
+        <div class="reel">?</div>
+      </div>
+
+      <div class="bet-panel">
+        <label for="betInput">Bet</label>
+        <input id="betInput" type="number" min="5" step="5" value="20" />
+        <button id="maxBetBtn" class="secondary-btn">Max Bet</button>
+      </div>
+
+      <div class="controls">
+        <button id="spinBtn" class="primary-btn">Spin</button>
+        <button id="freeSpinBtn" class="secondary-btn">Use Free Spin</button>
+      </div>
+
+      <p class="message" id="message">Press Spin to play.</p>
+    </section>
+
+    <section class="action-panel hidden" id="actionPanel">
+      <p id="actionText" class="action-text"></p>
+      <div class="action-buttons" id="actionButtons"></div>
+    </section>
+  </main>
+
+  <script src="slots.js"></script>
+</body>
+</html>
