@@ -1,5 +1,6 @@
 {
   "name": "crazy-casino-3",
+  "productName": "Crazy Casino 3",
   "version": "1.0.0",
   "description": "An opensource adicting sequal to crazy casino 2 and 1!",
   "homepage": "https://github.com/CrazyCassino/Crazy-Casino3#readme",
@@ -16,12 +17,13 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^42.4.0"
+    "electron": "^42.4.0",
+    "electron-builder": "^26.15.2"
   },
   "dependencies": {
-    "electron": "^42.4.0"
   }
 }
