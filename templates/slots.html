@@ -1,7 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <h1>Slots Machine</h1>
     <title>Slots</title>
 </head>
 <body>
-    <h1>Slots</h1>    
+    <h2>Welcome to the Slots Machine!</h2>
+    <p>Try your luck and see if you can win big!</p>
+    <button onclick="playSlots()">Play</button>
+    <div id="result"></div>
+
+    <script>
+        function playSlots() {
+            const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐'];
+            const slot1 = symbols[Math.floor(Math.random() * symbols.length)];
+            const slot2 = symbols[Math.floor(Math.random() * symbols.length)];
+            const slot3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+            document.getElementById('result').innerText = `You got: ${slot1} ${slot2} ${slot3}`;
+
+            if (slot1 === slot2 && slot2 === slot3) {
+                document.getElementById('result').innerText += " - Jackpot! You win!";
+            } else {
+                document.getElementById('result').innerText += " - Try again!";
+            }
+        }
+    </script> 
+    <html>
