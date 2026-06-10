@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Texas Hold'em</title>
+  <link rel="stylesheet" href="texasholdem.css">
+</head>
+<body>
+  <div class="table-glow"></div>
 
+  <main class="container">
+    <header class="hero">
+      <p class="eyebrow">OneCompiler Casino Night</p>
+      <h1>Texas Hold'em Poker</h1>
+      <div id="status" class="status">Press "New Hand" to deal cards.</div>
+    </header>
+
+    <section class="scoreboard">
+      <div>
+        <span>Chips</span>
+        <strong id="chips">$1000</strong>
+      </div>
+      <div>
+        <span>Pot</span>
+        <strong id="pot">$0</strong>
+      </div>
+      <div>
+        <span>Stage</span>
+        <strong id="stage">Ready</strong>
+      </div>
+    </section>
+
+    <section class="game-area">
+      <div class="hand-panel opponent-area">
+        <h2>Opponent's Hand</h2>
+        <div id="opponentHand" class="cards"></div>
+      </div>
+
+      <div class="hand-panel community-area">
+        <h2>Community Cards</h2>
+        <div id="communityCards" class="cards community"></div>
+      </div>
+
+      <div class="hand-panel player-area">
+        <h2>Player's Hand</h2>
+        <div id="playerHand" class="cards"></div>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="newHandBtn" class="action-button primary">New Hand</button>
+      <button id="foldBtn" class="action-button">Fold</button>
+      <button id="checkBtn" class="action-button">Check / Deal</button>
+      <button id="betBtn" class="action-button danger">Bet $50</button>
+    </section>
+  </main>
+
+  <script src="texasholdem.js"></script>
+</body>
+</html>
