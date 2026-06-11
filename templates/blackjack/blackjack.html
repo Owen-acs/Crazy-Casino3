@@ -1,1 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blackjack</title>
+  <link rel="stylesheet" href="blackjack.css">
+</head>
+<body>
+  <div class="table-glow"></div>
+  <div class="container">
+    <header class="hero">
+      <p class="eyebrow">Crazy Casino 3</p>
+      <h1>Blackjack</h1>
+      <p class="status" id="status">Press Deal to start</p>
 
+      <div class="scoreboard">
+        <div><span>Wins</span><strong id="wins">0</strong></div>
+        <div><span>Losses</span><strong id="losses">0</strong></div>
+        <div><span>Pushes</span><strong id="pushes">0</strong></div>
+      </div>
+    </header>
+
+    <main class="game-area">
+      <section class="hand-panel">
+        <h2>Dealer — <span id="dealerTotal">0</span></h2>
+        <div class="cards" id="dealerCards">
+          <div class="placeholder">?</div>
+        </div>
+      </section>
+
+      <section class="hand-panel">
+        <h2>You — <span id="playerTotal">0</span></h2>
+        <div class="cards" id="playerCards">
+          <div class="placeholder">?</div>
+        </div>
+      </section>
+    </main>
+
+    <div class="actions">
+      <button class="action-button primary" id="dealBtn">Deal</button>
+      <button class="action-button" id="hitBtn" disabled>Hit</button>
+      <button class="action-button danger" id="standBtn" disabled>Stand</button>
+    </div>
+  </div>
+
+  <script src="blackjack.js"></script>
+</body>
+</html>
