@@ -1,5 +1,6 @@
 var bet = 0;
 var betOn = null;
+var wins = 0;
 
 const landedOnText = document.getElementById("landedOnText");
 const rollBtn = document.getElementById("rollBtn");
@@ -10,6 +11,9 @@ function rollTheWheel() {
         landOn = "00";
     }
     landedOnText.textContent = `Landed on: ${landOn}`;
+    let win;
+    
+
 }
 
 rollBtn.addEventListener("click", rollTheWheel);
