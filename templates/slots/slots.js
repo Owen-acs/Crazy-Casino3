@@ -1,3 +1,4 @@
+
 const SYMBOLS = ["🍒", "🍋", "🔔", "⭐", "💎", "7️⃣"];
 const WILD = "7️⃣";
 const SCATTER = "💎";
@@ -24,7 +25,7 @@ let autoplay = false;
 const reelsEl = document.getElementById("reels");
 const cards = [...reelsEl.querySelectorAll(".card")];
 const statusEl = document.getElementById("status");
-const creditsEl = document.getElementById("credits");
+const creditsEl = document.getElementById("chips");
 const betEl = document.getElementById("bet");
 const lastWinEl = document.getElementById("lastWin");
 const winBanner = document.getElementById("winBanner");
