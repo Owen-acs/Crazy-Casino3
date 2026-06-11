@@ -1,3 +1,5 @@
+import { Chips, addChips, spendChips } from "../../static/mony.js";
+
 const suits = ["♠", "♥", "♦", "♣"];
 const ranks = ["A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"];
 
@@ -18,7 +20,6 @@ let deck = [];
 let playerHand = [];
 let opponentHand = [];
 let communityCards = [];
-let chips = 1000;
 let pot = 0;
 let stage = "ready";
 let handActive = false;
@@ -88,12 +89,12 @@ function render() {
     }
   }
 
-  chipsEl.textContent = `$${chips}`;
+  chipsEl.textContent = String(Chips);
   potEl.textContent = `$${pot}`;
   stageEl.textContent = stage[0].toUpperCase() + stage.slice(1);
   foldBtn.disabled = !handActive;
   checkBtn.disabled = !handActive;
-  betBtn.disabled = !handActive || chips < 50;
+  betBtn.disabled = !handActive || Chips < 50;
 }
 
 function setStatus(message) {
@@ -106,7 +107,7 @@ function newHand() {
   opponentHand = [draw(), draw()];
   communityCards = [];
   pot = 100;
-  chips = Math.max(0, chips - 50);
+  spendChips(50);
   stage = "pre-flop";
   handActive = true;
 
@@ -138,9 +139,9 @@ function advanceStage() {
 }
 
 function bet() {
-  if (!handActive || chips < 50) return;
+  if (!handActive || Chips < 50) return;
 
-  chips -= 50;
+  spendChips(50);
   pot += 100;
   setStatus("You bet $50. Opponent calls. Dealing continues...");
   advanceStage();
@@ -183,12 +184,12 @@ function showdown() {
   stage = "showdown";
 
   if (playerScore > opponentScore) {
-    chips += pot;
-    setStatus(`Showdown! You win $${pot} with the better hand.`);
+    addChips(pot);
+    setStatus(`Showdown! You win ${pot} chips with the better hand.`);
   } else if (playerScore < opponentScore) {
     setStatus("Showdown! Opponent wins this hand.");
   } else {
-    chips += Math.floor(pot / 2);
+    addChips(Math.floor(pot / 2));
     setStatus("Showdown! It's a tie, so you split the pot.");
   }
 
