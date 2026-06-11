@@ -1,75 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Neon Slots Casino</title>
-  <link rel="stylesheet" href="slots.css" />
-</head>
-<body>
-  <main class="slot-shell">
-    <div class="top-bar">
-      <div class="brand">
-        <span class="brand-icon">🎰</span>
-        <div>
-          <p class="brand-label">Neon Slots Casino</p>
-          <p class="brand-note">Flashy reels, free spins, life savings and bonus payouts.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neon Slots</title>
+    <link rel="stylesheet" href="slots.css" />
+  </head>
+  <body>
+    <div class="table-glow"></div>
+    <div class="container">
+      <header class="hero">
+        <p class="eyebrow">crazy Casino 3</p>
+        <h1>Neon Slots</h1>
+        <p id="status" class="status">Spin to win the jackpot!</p>
+      </header>
+
+      <div id="winBanner" class="win-banner">JACKPOT!</div>
+
+      <section class="scoreboard">
+        <div><span>Credits</span><strong id="credits">100</strong></div>
+        <div><span>Bet</span><strong id="bet">10</strong></div>
+        <div><span>Last Win</span><strong id="lastWin">0</strong></div>
+      </section>
+
+      <section class="game-area">
+        <div class="hand-panel">
+          <h2>Reels</h2>
+          <div id="reels" class="cards">
+            <div class="card">🍒</div>
+            <div class="card">🍋</div>
+            <div class="card">🔔</div>
+          </div>
         </div>
-      </div>
-      <button id="resetBtn" class="tiny-btn">RESET</button>
-    </div>
 
-    <section class="hero">
-      <h1>Spin for Neon Riches</h1>
-      <p>Keep the reels flashing, stack your money, and recover with life savings when the bank runs dry.</p>
-    </section>
+        <div class="paytable">
+          <h2>Paytable</h2>
+          <ul id="paytable"></ul>
+        </div>
 
-    <section class="stats-grid">
-      <div class="stat-card">
-        <span>Balance</span>
-        <strong id="balanceValue">$250</strong>
-      </div>
-      <div class="stat-card">
-        <span>Life Savings</span>
-        <strong id="lifeValue">$600</strong>
-      </div>
-      <div class="stat-card">
-        <span>Free Spins</span>
-        <strong id="freeValue">1</strong>
-      </div>
-      <div class="stat-card">
-        <span>Last Win</span>
-        <strong id="winValue">$0</strong>
-      </div>
-    </section>
+        <div class="rules">
+          <h2>How to Play</h2>
+          <ol>
+            <li>Set your bet with <b>+ Bet</b> / <b>- Bet</b> or tap <b>Max Bet</b>.</li>
+            <li>Press <b>Spin</b> to roll the three reels.</li>
+            <li>Match <b>three symbols</b> to win the listed multiplier.</li>
+            <li><b>7️⃣ is wild</b> and substitutes for any symbol.</li>
+            <li>Land <b>three 💎 scatters</b> to trigger a <b>Free Spin</b>.</li>
+            <li>Two matching symbols pay a small consolation win.</li>
+            <li>Use <b>Auto</b> to spin continuously, and <b>Reset</b> to start over.</li>
+          </ol>
+        </div>
+      </section>
 
-    <section class="slot-machine">
-      <div class="reels" id="reels">
-        <div class="reel">?</div>
-        <div class="reel">?</div>
-        <div class="reel">?</div>
+      <div class="actions">
+        <button id="betDown" class="action-button">- Bet</button>
+        <button id="betUp" class="action-button">+ Bet</button>
+        <button id="maxBet" class="action-button">Max Bet</button>
+        <button id="spin" class="action-button primary">Spin</button>
+        <button id="auto" class="action-button">Auto</button>
+        <button id="reset" class="action-button danger">Reset</button>
       </div>
 
-      <div class="bet-panel">
-        <label for="betInput">Bet</label>
-        <input id="betInput" type="number" min="5" step="5" value="20" />
-        <button id="maxBetBtn" class="secondary-btn">Max Bet</button>
-      </div>
+      
 
-      <div class="controls">
-        <button id="spinBtn" class="primary-btn">Spin</button>
-        <button id="freeSpinBtn" class="secondary-btn">Use Free Spin</button>
-      </div>
-
-      <p class="message" id="message">Press Spin to play.</p>
-    </section>
-
-    <section class="action-panel hidden" id="actionPanel">
-      <p id="actionText" class="action-text"></p>
-      <div class="action-buttons" id="actionButtons"></div>
-    </section>
-  </main>
-
-  <script src="slots.js"></script>
-</body>
+    <script src="slots.js"></script>
+  </body>
 </html>
