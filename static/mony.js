@@ -1,7 +1,25 @@
-export var Chips = 500
-export var Rocks = 0
-export var Shells = 0
-export var Dollars = 0
+const STORAGE_KEY = "crazy-casino-mony";
+
+function loadBalances() {
+    try {
+        const saved = sessionStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+    } catch (_) {}
+    return { Chips: 500, Rocks: 0, Shells: 0, Dollars: 0 };
+}
+
+function saveBalances() {
+    sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ Chips, Rocks, Shells, Dollars })
+    );
+}
+
+const saved = loadBalances();
+export var Chips = saved.Chips ?? 500;
+export var Rocks = saved.Rocks ?? 0;
+export var Shells = saved.Shells ?? 0;
+export var Dollars = saved.Dollars ?? 0;
 
 export var chipsValue = 2
 export var RocksValue = 0.5
@@ -54,6 +72,17 @@ export function Convert(type, quantity, toType)
     else if (to === 'rocks') AddRocks(targetAmount)
     else if (to === 'shells') AddShells(targetAmount)
     else if (to === 'dollars') AddDollars(targetAmount)
+
+    saveBalances();
 }
 
+export function addChips(amount) {
+    Chips += amount;
+    saveBalances();
+}
+
+export function spendChips(amount) {
+    Chips = Math.max(0, Chips - amount);
+    saveBalances();
+}
 
