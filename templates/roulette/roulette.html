@@ -3,82 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../static/style.css">
+    <link rel="stylesheet" href="../../templates/roulette/roulette.css">
     <title>Roulette</title>
 </head>
 <body>
-    <main class="game">
-        <h1>Roulette</h1>
-        <h3>Felling Lucky? Test your luck and win big!</h3>
+    <div class="table-glow"></div>
+    <div class="container">
+        <header class="hero">
+            <p class="eyebrow">Casino Royale</p>
+            <h1>Roulette</h1>
+            <p class="status">Feeling lucky? Place your bet and spin the wheel!</p>
+        </header>
 
-        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            <p>Chips: 0</p>
-            <p>Bet: 0</p>
-            <p>Win: 0</p>
-            <p>Loss: 0</p>
-            <p>Total: 0</p>
+        <div class="scoreboard">
+            <div><span>Chips</span><strong id="chips">1000</strong></div>
+            <div><span>Current Bet</span><strong id="betAmount">0</strong></div>
+            <div><span>Wins</span><strong id="wins">0</strong></div>
         </div>
 
-        <div>
-            <div>
-                <button type="button" id="bet0Btn">0</button>
-                <button type="button" id="bet00Btn">00</button>
+        <div class="game-area">
+            <div class="hand-panel">
+                <h2>Wheel</h2>
+                <div class="wheel-strip" id="wheelStrip"></div>
             </div>
 
-            <div>
-
+            <div class="hand-panel">
+                <h2>Choose Bet Amount</h2>
+                <div class="actions">
+                    <button type="button" class="action-button" data-chip="10">+10</button>
+                    <button type="button" class="action-button" data-chip="50">+50</button>
+                    <button type="button" class="action-button" data-chip="100">+100</button>
+                    <button type="button" class="action-button danger" id="clearBetBtn">Clear</button>
+                </div>
             </div>
 
-            <div>
-
+            <div class="hand-panel">
+                <h2>Outside Bets</h2>
+                <div class="actions">
+                    <button type="button" class="action-button" data-bet="red">Red</button>
+                    <button type="button" class="action-button" data-bet="black">Black</button>
+                    <button type="button" class="action-button" data-bet="even">Even</button>
+                    <button type="button" class="action-button" data-bet="odd">Odd</button>
+                    <button type="button" class="action-button" data-bet="low">1-18</button>
+                    <button type="button" class="action-button" data-bet="high">19-36</button>
+                </div>
             </div>
-            
-            
-            <div style="display: grid; grid-template-columns: repeat(6, minmax(40px, 1fr)); gap: 8px; justify-items: center;">
-                <button type="button" id="bet1Btn">1</button>
-                <button type="button" id="bet2Btn">2</button>
-                <button type="button" id="bet3Btn">3</button>
-                <button type="button" id="bet4Btn">4</button>
-                <button type="button" id="bet5Btn">5</button>
-                <button type="button" id="bet6Btn">6</button>
-                <button type="button" id="bet7Btn">7</button>
-                <button type="button" id="bet8Btn">8</button>
-                <button type="button" id="bet9Btn">9</button>
-                <button type="button" id="bet10Btn">10</button>
-                <button type="button" id="bet11Btn">11</button>
-                <button type="button" id="bet12Btn">12</button>
-                <button type="button" id="bet13Btn">13</button>
-                <button type="button" id="bet14Btn">14</button>
-                <button type="button" id="bet15Btn">15</button>
-                <button type="button" id="bet16Btn">16</button>
-                <button type="button" id="bet17Btn">17</button>
-                <button type="button" id="bet18Btn">18</button>
-                <button type="button" id="bet19Btn">19</button>
-                <button type="button" id="bet20Btn">20</button>
-                <button type="button" id="bet21Btn">21</button>
-                <button type="button" id="bet22Btn">22</button>
-                <button type="button" id="bet23Btn">23</button>
-                <button type="button" id="bet24Btn">24</button>
-                <button type="button" id="bet25Btn">25</button>
-                <button type="button" id="bet26Btn">26</button>
-                <button type="button" id="bet27Btn">27</button>
-                <button type="button" id="bet28Btn">28</button>
-                <button type="button" id="bet29Btn">29</button>
-                <button type="button" id="bet30Btn">30</button>
-                <button type="button" id="bet31Btn">31</button>
-                <button type="button" id="bet32Btn">32</button>
-                <button type="button" id="bet33Btn">33</button>
-                <button type="button" id="bet34Btn">34</button>
-                <button type="button" id="bet35Btn">35</button>
-                <button type="button" id="bet36Btn">36</button>
+
+            <div class="hand-panel">
+                <h2>Straight Up Numbers (red / black / green 0)</h2>
+                <div class="number-grid" id="numberGrid"></div>
+            </div>
+
+            <div class="actions">
+                <button type="button" class="action-button primary" id="rollBtn">Spin the Wheel</button>
+            </div>
+
+            <div class="hand-panel">
+                <h2>Result</h2>
+                <div class="cards">
+                    <div class="card" id="resultCard">-</div>
+                </div>
+                <p class="status" id="landedOnText">Place a bet to begin.</p>
             </div>
         </div>
-
-        <div>
-            <button style="padding-top: 20px;" type="button" id="rollBtn">roll the wheel</button>
-            <p id="landedOnText">Landed on:</p>
-        </div>
-    </main>
-    <script src="../../static/roulette.js"></script>
+    </div>
+    <script src="../../templates/roulette/roulette.js"></script>
 </body>
 </html>

@@ -1,211 +1,240 @@
-// Slots game logic: reels, betting, balance, free spins, life-savings, UI updates
-(function () {
-  const symbols = [
-    { s: '🍒', w: 40, pay: 2 },
-    { s: '🍋', w: 30, pay: 2 },
-    { s: '🍊', w: 15, pay: 3 },
-    { s: '🔔', w: 8, pay: 5 },
-    { s: '💎', w: 5, pay: 10 },
-    { s: '7️⃣', w: 2, pay: 25 }
-  ];
 
-  const reelEls = Array.from(document.querySelectorAll('.reel'));
-  const balanceEl = document.getElementById('balanceValue');
-  const lifeEl = document.getElementById('lifeValue');
-  const freeEl = document.getElementById('freeValue');
-  const winEl = document.getElementById('winValue');
-  const betInput = document.getElementById('betInput');
-  const spinBtn = document.getElementById('spinBtn');
-  const freeSpinBtn = document.getElementById('freeSpinBtn');
-  const message = document.getElementById('message');
-  const actionPanel = document.getElementById('actionPanel');
-  const actionText = document.getElementById('actionText');
-  const actionButtons = document.getElementById('actionButtons');
-  const resetBtn = document.getElementById('resetBtn');
-  const maxBetBtn = document.getElementById('maxBetBtn');
+const SYMBOLS = ["🍒", "🍋", "🔔", "⭐", "💎", "7️⃣"];
+const WILD = "7️⃣";
+const SCATTER = "💎";
 
-  let spinning = false;
+const PAYOUTS = {
+  "7️⃣": 60,
+  "💎": 30,
+  "⭐": 18,
+  "🔔": 12,
+  "🍋": 7,
+  "🍒": 5,
+};
 
-  // parse initial values from DOM (fallback defaults)
-  let balance = parseCurrency(balanceEl.textContent) || 250;
-  let lifeSavings = parseCurrency(lifeEl.textContent) || 600;
-  let freeSpins = parseInt(freeEl.textContent, 10) || 1;
-  let lastWin = parseCurrency(winEl.textContent) || 0;
+// Weighted reel strips: rarer symbols appear less often.
+const WEIGHTS = { "🍒": 6, "🍋": 5, "🔔": 4, "⭐": 3, "💎": 2, "7️⃣": 1 };
+const WEIGHTED = Object.entries(WEIGHTS).flatMap(([s, w]) => Array(w).fill(s));
 
-  function parseCurrency(text) {
-    const n = parseInt((text || '').replace(/[^0-9-]/g, ''), 10);
-    return Number.isNaN(n) ? 0 : n;
-  }
+let credits = 100;
+let bet = 10;
+let lastWin = 0;
+let spinning = false;
+let autoplay = false;
 
-  function fmt(n) {
-    return '$' + n.toString();
-  }
+const reelsEl = document.getElementById("reels");
+const cards = [...reelsEl.querySelectorAll(".card")];
+const statusEl = document.getElementById("status");
+const creditsEl = document.getElementById("chips");
+const betEl = document.getElementById("bet");
+const lastWinEl = document.getElementById("lastWin");
+const winBanner = document.getElementById("winBanner");
+const spinBtn = document.getElementById("spin");
+const betUpBtn = document.getElementById("betUp");
+const betDownBtn = document.getElementById("betDown");
+const maxBetBtn = document.getElementById("maxBet");
+const autoBtn = document.getElementById("auto");
+const resetBtn = document.getElementById("reset");
 
-  function updateUI() {
-    balanceEl.textContent = fmt(balance);
-    lifeEl.textContent = fmt(lifeSavings);
-    freeEl.textContent = String(freeSpins);
-    winEl.textContent = fmt(lastWin);
-    betInput.min = 5;
-    betInput.step = 5;
-    if (balance < 5 && freeSpins <= 0 && lifeSavings <= 0) {
-      spinBtn.disabled = true;
-      message.textContent = 'Out of money — try resetting or add life savings.';
-    } else {
-      spinBtn.disabled = false;
+let audioCtx = null;
+function tone(freq, duration = 0.12, type = "sine", gain = 0.08) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    g.gain.value = gain;
+    osc.connect(g).connect(audioCtx.destination);
+    osc.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (_) {}
+}
+
+function render() {
+  creditsEl.textContent = credits;
+  betEl.textContent = bet;
+  lastWinEl.textContent = lastWin;
+}
+
+function showBanner(text) {
+  winBanner.textContent = text;
+  winBanner.classList.add("show");
+  setTimeout(() => winBanner.classList.remove("show"), 2200);
+}
+
+function buildPaytable() {
+  const list = document.getElementById("paytable");
+  list.innerHTML = "";
+  Object.entries(PAYOUTS).forEach(([sym, mult]) => {
+    const li = document.createElement("li");
+    const note = sym === WILD ? " (wild)" : sym === SCATTER ? " (scatter)" : "";
+    li.innerHTML = `<span>${sym}${sym}${sym}${note}</span><b>x${mult}</b>`;
+    list.appendChild(li);
+  });
+  const scatter = document.createElement("li");
+  scatter.innerHTML = `<span>3 ${SCATTER} = Free Spin</span><b>🎁</b>`;
+  list.appendChild(scatter);
+}
+
+function rand() {
+  return WEIGHTED[Math.floor(Math.random() * WEIGHTED.length)];
+}
+
+// Wilds substitute for any symbol when forming a three-of-a-kind.
+function evaluate(result) {
+  const scatters = result.filter((s) => s === SCATTER).length;
+  const freeSpin = scatters === 3;
+
+  let winnings = 0;
+  for (const target of SYMBOLS) {
+    if (target === WILD) continue;
+    if (result.every((s) => s === target || s === WILD)) {
+      winnings = Math.max(winnings, bet * PAYOUTS[target]);
     }
   }
+  if (result.every((s) => s === WILD)) winnings = bet * PAYOUTS[WILD];
 
-  function weightedRandom() {
-    const total = symbols.reduce((s, x) => s + x.w, 0);
-    let r = Math.random() * total;
-    for (const sym of symbols) {
-      if (r < sym.w) return sym;
-      r -= sym.w;
-    }
-    return symbols[0];
-  }
-
-  function spinOnce(useFree) {
-    if (spinning) return;
-    let bet = Math.max(5, Math.floor(Number(betInput.value) || 5));
-    bet = Math.max(5, Math.floor(bet / 5) * 5);
-
-    if (!useFree && balance < bet) {
-      // Not enough funds; offer life savings
-      if (lifeSavings > 0) {
-        showAction('Insufficient balance. Use life savings to refill your balance?', [
-          { label: 'Use life savings', action: () => { balance += lifeSavings; lifeSavings = 0; hideAction(); updateUI(); spinOnce(false); } },
-          { label: 'Cancel', action: () => { hideAction(); } }
-        ]);
-      } else {
-        message.textContent = 'Not enough balance. Try a smaller bet or use a free spin.';
-      }
-      return;
-    }
-
-    spinning = true;
-    message.textContent = useFree ? 'Using free spin…' : 'Spinning… good luck!';
-    if (!useFree) balance -= bet;
-    updateUI();
-
-    // start spin animation
-    reelEls.forEach((r) => { r.classList.add('spin'); r.textContent = '❔'; });
-
-    // determine results (staggered stops)
-    const results = [weightedRandom(), weightedRandom(), weightedRandom()];
-
-    const stopDelay = [700, 920, 1180];
-    results.forEach((res, i) => {
-      setTimeout(() => {
-        reelEls[i].classList.remove('spin');
-        reelEls[i].textContent = res.s;
-        // small pop animation on stop
-        reelEls[i].classList.add('win');
-        setTimeout(() => reelEls[i].classList.remove('win'), 700);
-        // last reel resolves payout
-        if (i === results.length - 1) {
-          finalize(results, bet, useFree);
-        }
-      }, stopDelay[i]);
-    });
-  }
-
-  function finalize(results, bet, usedFree) {
-    // Check matches
-    const symStr = results.map((r) => r.s).join('|');
-    let payout = 0;
+  if (winnings === 0) {
     const counts = {};
-    results.forEach(r => counts[r.s] = (counts[r.s] || 0) + 1);
-    const top = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
-    const topCount = counts[top] || 0;
-
-    if (topCount === 3) {
-      // three of a kind
-      const symObj = symbols.find(x=>x.s===top);
-      payout = bet * (symObj ? symObj.pay * 3 : 8);
-      message.textContent = `Jackpot! ${symObj ? symObj.s : ''} x3 — you win ${fmt(payout)}!`;
-    } else if (topCount === 2) {
-      const symObj = symbols.find(x=>x.s===top);
-      payout = bet * (symObj ? Math.max(2, symObj.pay) : 2);
-      message.textContent = `Nice! Two matching symbols — you win ${fmt(payout)}.`;
-    } else {
-      // small random consolation chance
-      if (Math.random() < 0.06) {
-        payout = Math.floor(bet * 0.5);
-        message.textContent = `Lucky! Small consolation ${fmt(payout)}.`;
-      } else {
-        message.textContent = usedFree ? 'Free spin ended. No win.' : 'No win. Try again!';
-      }
-    }
-
-    if (payout > 0) {
-      balance += payout;
-      lastWin = payout;
-      // bonus reward: small chance to grant free spin
-      if (Math.random() < 0.12) { freeSpins += 1; message.textContent += ' Bonus free spin awarded!'; }
-    }
-
-    // if used free spin, decrement
-    if (usedFree) freeSpins = Math.max(0, freeSpins - 1);
-
-    // unlock small life boost if balance goes negative (defensive)
-    if (balance < 0 && lifeSavings > 0) {
-      showAction('Balance negative. Use life savings to recover?', [
-        { label: 'Use life savings', action: () => { balance += lifeSavings; lifeSavings = 0; hideAction(); updateUI(); } },
-        { label: 'Decline', action: () => { hideAction(); } }
-      ]);
-    }
-
-    updateUI();
-    spinning = false;
+    result.forEach((s) => (counts[s] = (counts[s] || 0) + 1));
+    const wilds = counts[WILD] || 0;
+    const pair = Object.entries(counts).some(([s, n]) => s !== WILD && n + wilds >= 2);
+    if (pair || wilds >= 2) winnings = Math.floor(bet * 0.6);
   }
 
-  function showAction(text, buttons) {
-    actionText.textContent = text;
-    actionButtons.innerHTML = '';
-    buttons.forEach(b => {
-      const btn = document.createElement('button');
-      btn.textContent = b.label;
-      btn.className = 'primary-btn';
-      btn.addEventListener('click', b.action);
-      actionButtons.appendChild(btn);
+  return { winnings, freeSpin };
+}
+
+function spin(isFree = false) {
+  if (spinning) return;
+  if (!isFree && bet > credits) {
+    statusEl.textContent = "Not enough credits for that bet!";
+    stopAuto();
+    return;
+  }
+
+  spinning = true;
+  toggleControls(true);
+
+  if (!isFree) credits -= bet;
+  lastWin = 0;
+  render();
+  statusEl.textContent = isFree ? "Free spin! 🎁" : "Spinning...";
+
+  cards.forEach((c) => {
+    c.classList.add("spinning");
+    c.classList.remove("win");
+  });
+
+  const result = [rand(), rand(), rand()];
+
+  cards.forEach((card, i) => {
+    setTimeout(() => {
+      card.classList.remove("spinning");
+      card.textContent = result[i];
+      tone(420 + i * 90, 0.08, "triangle");
+      if (i === cards.length - 1) finishSpin(result);
+    }, 600 + i * 550);
+  });
+
+  const flicker = setInterval(() => {
+    cards.forEach((card) => {
+      if (card.classList.contains("spinning")) card.textContent = rand();
     });
-    actionPanel.classList.remove('hidden');
+  }, 90);
+  setTimeout(() => clearInterval(flicker), 600 + cards.length * 550);
+}
+
+function finishSpin(result) {
+  const { winnings, freeSpin } = evaluate(result);
+
+  if (winnings > 0) {
+    credits += winnings;
+    lastWin = winnings;
+    cards.forEach((c) => c.classList.add("win"));
+    statusEl.textContent = `You won ${winnings} credits! 🎉`;
+    [660, 880, 1040].forEach((f, i) => setTimeout(() => tone(f, 0.15, "square", 0.06), i * 120));
+    if (winnings >= bet * 18) showBanner(`BIG WIN! +${winnings}`);
+    else showBanner(`WIN +${winnings}`);
+  } else {
+    statusEl.textContent = "No match. Spin again!";
   }
 
-  function hideAction() {
-    actionPanel.classList.add('hidden');
-    actionText.textContent = '';
-    actionButtons.innerHTML = '';
+  render();
+  spinning = false;
+  toggleControls(false);
+
+  if (freeSpin) {
+    statusEl.textContent += " 3 💎 — Free Spin!";
+    showBanner("FREE SPIN! 🎁");
+    setTimeout(() => spin(true), 1100);
+    return;
   }
 
-  // wire controls
-  spinBtn.addEventListener('click', () => spinOnce(false));
-  freeSpinBtn.addEventListener('click', () => {
-    if (freeSpins <= 0) { message.textContent = 'No free spins available.'; return; }
-    spinOnce(true);
-  });
+  if (credits < 5) {
+    statusEl.textContent = "Out of credits! Press Reset to play again.";
+    spinBtn.disabled = true;
+    stopAuto();
+    return;
+  }
 
-  maxBetBtn.addEventListener('click', () => {
-    const max = Math.max(5, balance);
-    betInput.value = Math.max(5, Math.floor(max / 5) * 5);
-  });
+  if (autoplay) setTimeout(() => spin(), 900);
+}
 
-  resetBtn.addEventListener('click', () => {
-    balance = 250; lifeSavings = 600; freeSpins = 1; lastWin = 0; hideAction(); updateUI();
-    reelEls.forEach(r => r.textContent = '?');
-    message.textContent = 'Game reset.';
-  });
+function toggleControls(disabled) {
+  [spinBtn, betUpBtn, betDownBtn, maxBetBtn].forEach((b) => (b.disabled = disabled));
+}
 
-  // init
-  updateUI();
-  // small idle animation on reels
-  reelEls.forEach((r, i) => {
-    r.addEventListener('click', () => {
-      r.classList.add('win');
-      setTimeout(() => r.classList.remove('win'), 500);
-    });
-  });
+function stopAuto() {
+  autoplay = false;
+  autoBtn.textContent = "Auto";
+  autoBtn.classList.remove("active");
+}
 
-})();
+betUpBtn.addEventListener("click", () => {
+  if (spinning) return;
+  bet = Math.min(bet + 5, Math.max(5, credits));
+  render();
+});
+
+betDownBtn.addEventListener("click", () => {
+  if (spinning) return;
+  bet = Math.max(5, bet - 5);
+  render();
+});
+
+maxBetBtn.addEventListener("click", () => {
+  if (spinning) return;
+  bet = Math.max(5, Math.floor(credits / 5) * 5);
+  render();
+});
+
+autoBtn.addEventListener("click", () => {
+  if (credits < 5) return;
+  autoplay = !autoplay;
+  autoBtn.textContent = autoplay ? "Stop" : "Auto";
+  autoBtn.classList.toggle("active", autoplay);
+  if (autoplay && !spinning) spin();
+});
+
+spinBtn.addEventListener("click", () => spin());
+
+resetBtn.addEventListener("click", () => {
+  if (spinning) return;
+  stopAuto();
+  credits = 100;
+  bet = 10;
+  lastWin = 0;
+  cards.forEach((c, i) => {
+    c.classList.remove("win", "spinning");
+    c.textContent = SYMBOLS[i];
+  });
+  spinBtn.disabled = false;
+  statusEl.textContent = "Spin to win the jackpot!";
+  render();
+});
+
+buildPaytable();
+render();

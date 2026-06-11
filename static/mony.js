@@ -1,33 +1,14 @@
-var Chips = 500
-var Rocks = 0
-var Shells = 0
-var Dollars = 0
+export var Chips = 500
+export var Rocks = 0
+export var Shells = 0
+export var Dollars = 0
 
-var chipsValue = 2
-var RocksValue = 0.5
-var ShellsValue = 3
-var DollarsValue = 1
+export var chipsValue = 2
+export var RocksValue = 0.5
+export var ShellsValue = 3
+export var DollarsValue = 1
 
-function AddChips(amount)
-{
-    Chips += amount
-}
-
-function AddRocks(amount)
-{
-    Rocks += amount
-}
-
-function AddShells(amount)
-{
-    Shells += amount
-}
-
-function AddDollars(amount)
-{
-    Dollars += amount
-}
-function Convert(type, quantity, toType)
+export function Convert(type, quantity, toType)
 {
     var rates = {
         chips: chipsValue,
